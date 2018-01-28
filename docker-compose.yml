@@ -1,0 +1,31 @@
+version: '3'
+services:
+
+  bearded-dragon:
+    build: .
+    command: /bin/bash
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./:/app
+    links:
+      - influxdb
+
+  influxdb:
+    image: tutum/influxdb
+    volumes:
+      - ./influxdb:/data
+    environment:
+      - PRE_CREATE_DB=btc_usd
+      - ADMIN_USER=root
+      - INFLUXDB_INIT_PWD=root
+    ports:
+      - 8083:8083
+      - 8086:8086
+
+  grafana:
+    image: grafana/grafana
+    volumes:
+      - ./grafana:/var/lib/grafana
+    ports:
+      - 3000:3000

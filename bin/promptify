@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+
+cat banner.txt
+
+#
+# Turn ./bin/bearded-dragon into an interactive prompt
+#
+command=`basename $1`
+while read -e -p "$command> " opts; do
+  $1 ${opts[@]}
+  history -s -- ${opts[@]}
+done
+}
