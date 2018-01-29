@@ -6,7 +6,6 @@ import influx
 import tables
 
 
-
 let time_units = %* {
   "1m": "60",
   "5m": "300",

@@ -17,7 +17,7 @@ import strutils
 import docopt
 
 from lib/importer import Import
-import lib/listener
+from lib/listener import Listen
 
 let args = docopt(doc, version = "Bearded Dragon 0.1.0")
 
@@ -27,3 +27,7 @@ if args["import"]:
   let to_date   = $args["<to-date>"]
   let every     = $args["<time-units>"]
   Import(service, from_date, to_date, every)
+
+if args["listen"]:
+  let service = $args["<service>"]
+  Listen(service)

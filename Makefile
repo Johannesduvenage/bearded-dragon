@@ -10,7 +10,7 @@ compile:
 	docker-compose exec bearded-dragon nim c -d:ssl -o:bin/dragon dragon.nim
 
 build:
-	docker-compose build
+	docker-compose build --no-cache
 
 run:
 	docker-compose up -d
