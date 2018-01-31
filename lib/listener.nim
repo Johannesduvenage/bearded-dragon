@@ -1,6 +1,8 @@
 import websocket, asyncnet, asyncdispatch
 import json, net
 
+import clients/http/gdax.nim
+
 
 var j = """
 {
@@ -21,9 +23,22 @@ var j = """
 """
 
 
-proc Listen* (service: string): void =
-  let ws = waitFor newAsyncWebsocket("wss://ws-feed.gdax.com:443/", ctx=newContext(verifyMode=CVerifyNone))
-  echo "connected!"
+proc Listen* (service: string, asset: string): void =
+
+  var gc = newGdaxHttpClient()
+  echo gc.ProductTicker("BTC-USD")
+
+  # TODO: create database named <service>-<asset>-<time> if it doesn't exist
+
+  # let ws = waitFor newAsyncWebsocket("ws-feed-public.sandbox.gdax.com", Port 443, "/", ssl=true)
+  # let ws = waitFor newAsyncWebsocket("wss://ws-feed-public.sandbox.gdax.com:443/ticker", ctx=newContext(verifyMode=CVerifyNone))
+  # echo "connected!"
+
+  # TODO: initiate connection, sustain subscription
+
+  # TODO: every tick, insert new data into influx
+
+  # TODO: be able to view live updates from grafana
 
   # proc reader() {.async.} =
   #   while true:
@@ -33,7 +48,7 @@ proc Listen* (service: string): void =
   #
   # proc ping() {.async.} =
   #   while true:
-  #     await sleepAsync(5000)
+  #     await sleepAsync(3000)
   #     await ws.sock.sendPing(true)
   #     # await ws.sock.sendText(j, false)
   #

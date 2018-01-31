@@ -6,9 +6,23 @@ cat banner.txt
 #
 # Turn ./bin/bearded-dragon into an interactive prompt
 #
+
+trap ctrl_c INT
+
+function ctrl_c() {
+  history -a .history
+  exit 0
+}
+
+if [[ ! -f .history ]]; then
+  touch .history
+fi
+
+history -r .history
 command=`basename $1`
+
 while read -e -p "$command> " opts; do
   $1 ${opts[@]}
   history -s -- ${opts[@]}
 done
-}
+echo

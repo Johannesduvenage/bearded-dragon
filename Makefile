@@ -1,7 +1,9 @@
 all: build run compile
 
-clean:
+clean: kill
 	-rm -rf nimcache
+	-rm -rf grafana
+	-rm -rf influxdb
 
 logs:
 	docker logs -f `docker ps -aqf "name=beardeddragon_bearded-dragon_1"`
@@ -16,7 +18,7 @@ run:
 	docker-compose up -d
 
 dragon:
-	docker-compose exec bearded-dragon promptify ./bin/dragon
+	docker-compose exec bearded-dragon ./bin/promptify ./bin/dragon
 
 kill:
 	docker-compose kill
@@ -24,3 +26,6 @@ kill:
 restart:
 	docker-compose restart
 	make logs
+
+connect:
+	docker-compose exec bearded-dragon bash

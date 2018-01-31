@@ -2,8 +2,10 @@ let doc = """
 Bearded Dragon.
 
 Usage:
-  dragon import <service> from <from-date> to <to-date> every <time-units>
-  dragon listen (gdax)
+  dragon import <service> for <asset> from <start> to <end> every <granularity>
+  dragon listen <service> for <asset>
+  dragon show <service>
+  dragon tracking
   dragon (-h | --help | help)
   dragon (--version | version)
 
@@ -15,19 +17,31 @@ Options:
 
 import strutils
 import docopt
+import grafanim, json
 
 from lib/importer import Import
 from lib/listener import Listen
+import lib/clients/http/gdax
+import lib/clients/db/influxdb
 
 let args = docopt(doc, version = "Bearded Dragon 0.1.0")
 
 if args["import"]:
-  let service   = $args["<service>"]
-  let from_date = $args["<from-date>"]
-  let to_date   = $args["<to-date>"]
-  let every     = $args["<time-units>"]
-  Import(service, from_date, to_date, every)
+  Import({
+    "service": $args["<service>"],
+    "asset": $args["<asset>"],
+    "start": $args["<start>"],
+    "end": $args["<end>"],
+    "granularity": $args["<granularity>"]
+  }.newTable)
 
-if args["listen"]:
+elif args["listen"]:
   let service = $args["<service>"]
-  Listen(service)
+  let asset   = $args["<asset>"]
+  Listen(service, asset)
+
+elif args["show"]:
+  echo Products(newGdaxHttpClient()).pretty
+
+elif args["tracking"]:
+  echo Databases(newInfluxDBClient("influxdb")).pretty
