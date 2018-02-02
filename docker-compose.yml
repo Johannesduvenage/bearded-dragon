@@ -28,5 +28,7 @@ services:
     image: grafana/grafana
     volumes:
       - ./grafana:/var/lib/grafana
+    links:
+      - influxdb
     ports:
       - 3000:3000

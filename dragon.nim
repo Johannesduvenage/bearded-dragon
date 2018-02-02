@@ -17,7 +17,7 @@ Options:
 
 import strutils
 import docopt
-import grafanim, json
+import json
 
 from lib/importer import Import
 from lib/listener import Listen
@@ -36,12 +36,13 @@ if args["import"]:
   }.newTable)
 
 elif args["listen"]:
-  let service = $args["<service>"]
-  let asset   = $args["<asset>"]
+  var service = $args["<service>"]
+  var asset   = $args["<asset>"]
   Listen(service, asset)
+  # discard Listen()
 
 elif args["show"]:
   echo Products(newGdaxHttpClient()).pretty
 
 elif args["tracking"]:
-  echo Databases(newInfluxDBClient("influxdb")).pretty
+  echo Databases(newInfluxDBClient("influxdb", "root", "root")).pretty

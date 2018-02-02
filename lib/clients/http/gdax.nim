@@ -1,4 +1,9 @@
-import httpclient, json, tables, strutils
+import httpclient, json, tables, strutils, times
+import websocket, asyncnet, asyncdispatch, net
+
+import ../db/influxdb
+import ../../utils
+import grafanim
 
 let url = "https://api.gdax.com/"
 
@@ -87,3 +92,72 @@ method ProductCandles* (self: GdaxHttpClient, opts: TableRef[string, string]): J
     return %* {
       "error": e.msg
     }
+
+
+discard """
+Realtime Methods
+"""
+
+
+method ListenTicker* (self: GdaxHttpClient, service: string, asset: var string): void {.base.} =
+
+  # websocket payload
+  var j = %* {
+    "type": "subscribe",
+    "product_ids": [ asset ],
+    "channels": [
+      {
+        "name": "ticker",
+        "product_ids": [ asset ]
+      }
+    ]
+  }
+
+  # get human readable date
+  let date, _ = $getLocalTime(getTime())
+  # form basic label (modified for database name)
+  var label = [service, asset, date].join("-")
+  var databaseName = label
+  CleanDatabaseName(databaseName)
+
+  # initiate websocket session
+  let url = "wss://ws-feed-public.sandbox.gdax.com:443/"
+  let ws = waitFor newAsyncWebsocket(url, ctx=newContext(verifyMode=CVerifyNone))
+
+  # create db + monit clients
+  # TODO: fix this disgusting host inconsistency
+  let ic = newInfluxDBClient("influxdb", "root", "root")
+  let gc = newGrafanaClient("grafana:3000", "admin", "admin")
+  echo $gc.NewInfluxDBDatasource( %* {
+    "name": label,
+    "database": databaseName,
+    "user": "root",
+    "pass": "root",
+    "host": "localhost"
+  })
+  echo $gc.NewDashboard( %* {
+    "title": label
+  })
+
+  proc reader() {.async.} =
+    while true:
+      let read = await ws.sock.readData(true)
+      let resp = parseJson($read.data)
+      if resp["type"].getStr == "subscriptions":
+        continue
+      if resp.hasKey("time") == false:
+        resp["time"] = epochTime().newJFloat
+      var args = newJArray()
+      args.elems = @[ resp["time"], resp["price"].getStr.parseFloat.newJFloat ]
+      echo ic.Insert(databaseName, args)
+
+      # echo $resp.pretty
+
+  proc writer() {.async.} =
+    while true:
+      await sleepAsync(2000)
+      await ws.sock.sendText($j, true)
+
+  asyncCheck reader()
+  asyncCheck writer()
+  runForever()

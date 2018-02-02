@@ -3,6 +3,7 @@ import json
 import sequtils
 import strutils
 import tables
+import grafanim
 
 import clients/http/gdax
 import clients/db/influxdb
@@ -17,10 +18,14 @@ let time_units = {
 }.newTable
 
 proc Import* (opts: TableRef[string, string]): void =
-  let ic = newInfluxDBClient("influxdb")
+  let ic = newInfluxDBClient("influxdb", "root", "root")
+  let gc = newGrafanaClient("grafana", "admin", "admin")
   opts["granularity"] = time_units[opts["granularity"]]
-  var gc = newGdaxHttpClient()
-  let buckets = gc.ProductCandles(opts)
-  ic.InsertAll(opts["asset"], buckets)
+  var ghc = newGdaxHttpClient()
+  var buckets = ghc.ProductCandles(opts)
+  echo buckets[0]
+  # ic.InsertAll(opts["asset"], buckets)
+  # gc.NewInfluxDBDatasource()
+  # gc.NewDashboard()
   # TODO: create grafana datasource + dashboard
   # TODO: echo grafana link

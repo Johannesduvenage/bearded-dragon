@@ -4,57 +4,68 @@ import json
 import tables
 import httpclient
 
-
-proc CleanDatabaseName(database: var string): void =
-  database = database.toLower.replace("-", "_")
-
+import ../../utils
 
 type
   InfluxDBClient* = object
     cli: InfluxDB
 
 
-proc newInfluxDBClient* (host: string): InfluxDBClient =
-  let cli = InfluxDB(protocol: HTTP, host: host, port: 8086, username: "root", password: "root") # , debugMode: true)
+proc newInfluxDBClient* (host: string, user: string, pass: string): InfluxDBClient =
+  let cli = InfluxDB(protocol: HTTP, host: host, port: 8086, username: user, password: user) # , debugMode: true)
   return InfluxDBClient(cli: cli)
 
 
-proc CreateDatabase* (self: InfluxDBClient, database: var string): JsonNode =
-  CleanDatabaseName(database)
-  let (resp, data) = self.cli.query("", "CREATE DATABASE " & database, HttpPost)
-  if $resp != "OK":
-    raise newException(IOError, "create failed: " & $resp)
-  return data
+method CreateDatabase* (self: InfluxDBClient, database: string): JsonNode {.base.} =
+  # CleanDatabaseName(database)
+  try:
+    let (resp, data) = self.cli.query("", "CREATE DATABASE " & database, HttpPost)
+    if $resp != "OK":
+      raise newException(IOError, "create failed: " & $resp)
+    return data
+  except IOError as e:
+    return %* {
+      "error": e.msg
+    }
 
 
-proc Databases* (self: InfluxDBClient): JsonNode =
+method Databases* (self: InfluxDBClient): JsonNode {.base.} =
   let (resp, data) = self.cli.query("", "SHOW DATABASES")
   if $resp != "OK":
-    raise newException(IOError, "create failed: " & $resp)
+    raise newException(IOError, "query failed: " & $resp)
   return data
 
 
-proc SelectAll* (self: InfluxDBClient, database: var string): JsonNode =
-  CleanDatabaseName(database)
+method SelectAll* (self: InfluxDBClient, database: string): JsonNode {.base.} =
+  # CleanDatabaseName(database)
   let (resp, data) = self.cli.query(database, "SELECT * FROM price")
   if $resp != "OK":
     raise newException(IOError, "select failed: " & $resp)
   return data
 
 
-proc Insert* (self: InfluxDBClient, database: var string, item: JsonNode): JsonNode =
+method Insert* (self: InfluxDBClient, database: var string, item: var JsonNode): JsonNode {.base.} =
+  # item = [unix time, value]
   CleanDatabaseName(database)
-  discard self.CreateDatabase(database)
-  let timestamp = parseInt(item[0].getStr & "000000000")
+  echo database
+  echo $self.CreateDatabase(database)
+  var timestampStr = $item[0].getFNum
+  var timestamp: int64
+  if timestampStr.contains("."):
+    let seconds = timestampStr.split(".")[0]
+    timestamp = parseBiggestInt(seconds & "000000000")
+  else:
+    timestamp = parseBiggestInt(timestampStr & "000000000")
   let proto = LineProtocol(measurement: "price", timestamp: timestamp, fields: @{
-    "value": item[4].getStr
+    "value": $item[1].getFNum
   }.toTable)
+  echo $proto
   let (resp, data) = self.cli.write(database, @[proto])
   if $resp != "OK":
     raise newException(IOError, $resp & "; Check if database exists")
   return data
 
 
-proc InsertAll* (self: InfluxDBClient, database: var string, items: JsonNode): void =
-  for item in items:
+method InsertAll* (self: InfluxDBClient, database: var string, items: var JsonNode): void {.base.} =
+  for item in items.mitems():
     discard self.Insert(database, item)
