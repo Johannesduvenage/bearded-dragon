@@ -28,6 +28,7 @@ services:
     image: grafana/grafana
     volumes:
       - ./grafana:/var/lib/grafana
+      - ./dashboards:/usr/share/grafana/public/dashboards
     links:
       - influxdb
     ports:
