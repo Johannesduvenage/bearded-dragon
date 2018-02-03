@@ -118,16 +118,6 @@ Open the link returned in the browser to find a list of Grafana dashboards displ
 the price of all the assets you are tracking. These graphs refresh every second (which you can change via the `refresh` query parameter)
 
 
-## Importing
-
-
-Importing slurps data from a specified service (e.g. gdax) and stores it
-inside Influxdb. You can create dashboards in Grafana at [http://localhost:3000](http://localhost:3000).
-All Influxdb and Grafana data is stored persistently. Run `make clean` to start fresh.
-
-The only thing that's pre-added is the data source in Grafana pointing to an InfluxDB database called `btc_usd`.
-
-
 ## Credentials
 
 
