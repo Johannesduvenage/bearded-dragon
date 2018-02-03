@@ -1,10 +1,11 @@
 bearded-dragon
 ==============
 
-Like Gekko, but faster
+Like Gekko, but faster and better
 
 
 ## Getting Started
+
 
 This project is managed completely in docker. It's best to interface with it
 via the Makefile. The following targets are available:
@@ -21,6 +22,7 @@ via the Makefile. The following targets are available:
 
 #### Volumes
 
+
 To keep data persistent, we mount certain directories that will maintain state
 for InfluxDB and Grafana. `./dashapp` and `./dashboards` provide dynamic dashboards
 for live streaming data with `dragon listen`. `./influxdb` and `./grafana` are
@@ -32,6 +34,7 @@ main bearded-dragon container where most of the commands will be run.
 Check out `docker-compose.yml` for more info.
 
 #### Interactive Shell
+
 
 Dragon provides an interactive shell that provides a history (stored in `./.history`).
 Here you can run successive commands, even start multiple live streams and watch
@@ -116,8 +119,9 @@ the price of all the assets you are tracking. These graphs refresh every second 
 
 ## Importing
 
+
 Importing slurps data from a specified service (e.g. gdax) and stores it
-inside Influxdb. You can create dashboards in Grafana at (http://localhost:3000)[http://localhost:3000].
+inside Influxdb. You can create dashboards in Grafana at [http://localhost:3000](http://localhost:3000).
 All Influxdb and Grafana data is stored persistently. Run `make clean` to start fresh.
 
 The only thing that's pre-added is the data source in Grafana pointing to an InfluxDB database called `btc_usd`.
@@ -136,3 +140,19 @@ pass: root
 
 user: admin
 pass: admin
+
+
+## Development
+
+
+#### InfluxDB
+
+If your developing anything related to InfluxDB, you probably need to make
+queries frequently. The easiest way is to use `make query`:
+
+```sh
+$ make query q="show databases"
+$ make query db="gdax_btc_usd_..." q="select value from price"
+```
+
+You could also just run an InfluxDB shell with `docker-compose exec influxdb influx`
