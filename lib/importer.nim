@@ -1,7 +1,3 @@
-import httpclient
-import json
-import sequtils
-import strutils
 import tables
 import grafanim
 
@@ -23,7 +19,6 @@ proc Import* (opts: TableRef[string, string]): void =
   opts["granularity"] = time_units[opts["granularity"]]
   var ghc = newGdaxHttpClient()
   var buckets = ghc.ProductCandles(opts)
-  echo buckets[0]
   # ic.InsertAll(opts["asset"], buckets)
   # gc.NewInfluxDBDatasource()
   # gc.NewDashboard()
