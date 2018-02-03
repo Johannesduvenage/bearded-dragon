@@ -20,6 +20,8 @@ via the Makefile. The following targets are available:
   - query: run an influxdb query (params: db="<database>", q="<query>")
   - clean: kills containers, removes nimcache and the influxdb + grafana volumes
 
+The first thing you want to do is bring the project up. Do this with `make`.
+
 
 #### Volumes
 
