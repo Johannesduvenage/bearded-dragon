@@ -10,8 +10,7 @@ cat banner.txt
 trap ctrl_c INT
 
 function ctrl_c() {
-  history -a .history
-  exit 0
+  echo "type 'exit' to exit"
 }
 
 if [[ ! -f .history ]]; then
@@ -22,7 +21,15 @@ history -r .history
 command=`basename $1`
 
 while read -e -p "$command> " opts; do
-  $1 ${opts[@]}
+  [[ "${opts[@]}" == "exit" ]] && break
+  if [[ "${opts[@]}" =~ ^listen.* ]]; then
+    $1 ${opts[@]} 2>.log >/dev/null &
+    echo "View your feed here: http://localhost:3000/dashboard/script/dragon.js?metric=price&from=now-5m&to=now&refresh=1s"
+  else
+    $1 ${opts[@]}
+  fi
   history -s -- ${opts[@]}
 done
-echo
+
+kill $(jobs -p)
+history -a .history

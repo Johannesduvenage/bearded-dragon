@@ -99,7 +99,7 @@ Realtime Methods
 """
 
 
-method ListenTicker* (self: GdaxHttpClient, service: string, asset: var string): void {.base.} =
+method ListenTicker* (self: GdaxHttpClient, service: string, asset: string): void {.base.} =
 
   # websocket payload
   var j = %* {
@@ -121,21 +121,22 @@ method ListenTicker* (self: GdaxHttpClient, service: string, asset: var string):
   CleanDatabaseName(databaseName)
 
   # initiate websocket session
-  let url = "wss://ws-feed-public.sandbox.gdax.com:443/"
+  # let url = "wss://ws-feed-public.sandbox.gdax.com:443/"
+  let url = "wss://ws-feed.gdax.com:443/"
   let ws = waitFor newAsyncWebsocket(url, ctx=newContext(verifyMode=CVerifyNone))
 
   # create db + monit clients
   # TODO: fix this disgusting host inconsistency
   let ic = newInfluxDBClient("influxdb", "root", "root")
   let gc = newGrafanaClient("grafana:3000", "admin", "admin")
-  echo $gc.NewInfluxDBDatasource( %* {
+  discard gc.NewInfluxDBDatasource( %* {
     "name": label,
     "database": databaseName,
     "user": "root",
     "pass": "root",
     "host": "localhost"
   })
-  echo $gc.NewDashboard( %* {
+  discard gc.NewDashboard( %* {
     "title": label
   })
 
@@ -145,17 +146,19 @@ method ListenTicker* (self: GdaxHttpClient, service: string, asset: var string):
       let resp = parseJson($read.data)
       if resp["type"].getStr == "subscriptions":
         continue
+      if not resp.hasKey("price") or resp["price"].getStr == "":
+        stderr.writeLine("error: bad response \n" & resp.pretty)
+        quit(1)
       if resp.hasKey("time") == false:
         resp["time"] = epochTime().newJFloat
       var args = newJArray()
+      echo $resp
       args.elems = @[ resp["time"], resp["price"].getStr.parseFloat.newJFloat ]
-      echo ic.Insert(databaseName, args)
-
-      # echo $resp.pretty
+      discard ic.Insert(databaseName, asset, args)
 
   proc writer() {.async.} =
     while true:
-      await sleepAsync(2000)
+      await sleepAsync(5000)
       await ws.sock.sendText($j, true)
 
   asyncCheck reader()

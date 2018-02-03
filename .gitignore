@@ -3,3 +3,4 @@ bin/dragon
 grafana
 influxdb
 .history
+.log

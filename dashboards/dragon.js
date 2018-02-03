@@ -29,8 +29,8 @@ return function scriptedDashboard (callback) {
   'use strict';
 
   loadScripts([
-      'public/dashboards/scripted.app.js',
-      'public/dashboards/scripted.conf.js'
+      'public/app/dashapp/dragon.app.js',
+      'public/app/dashapp/dragon.conf.js'
     ]).then(function () {
 
     // sanitize :: Str -> new Str
@@ -53,7 +53,7 @@ return function scriptedDashboard (callback) {
       // Series used to get the list of all hosts
       // (Some metric that is common for all hosts).
       // If there is none for all hpsts ypu can add a list
-      defaultQueries: [ 'load_midterm' ],
+      defaultQueries: [ 'price' ],
       defaultHostTags: [ 'host' ]
     };
 

@@ -6,7 +6,7 @@
 import clients/http/gdax.nim
 
 
-proc Listen* (service: string, asset: var string): void =
+proc Listen* (service: string, asset: string): void =
   var gc = newGdaxHttpClient()
   gc.ListenTicker(service, asset)
 

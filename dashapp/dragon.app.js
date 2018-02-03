@@ -109,10 +109,10 @@ var getDashApp = function getDashApp (datasourcesAll, getdashConf) {
     query: '',
     fill: 'null',
     groupBy: [
-      {
-        type: 'time',
-        interval: 'auto'
-      }
+      // {
+      //   type: 'time',
+      //   interval: 'auto'
+      // }
     ]
   };
 
@@ -371,10 +371,10 @@ var getDashApp = function getDashApp (datasourcesAll, getdashConf) {
         });
       }
     } else {
-      select.push({
-        type: 'mean',
-        params: []
-      });
+      // select.push({
+      //   type: 'mean',
+      //   params: []
+      // });
     }
 
     if (graphConf.math)

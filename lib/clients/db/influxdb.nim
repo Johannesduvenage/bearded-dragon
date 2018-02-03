@@ -44,11 +44,10 @@ method SelectAll* (self: InfluxDBClient, database: string): JsonNode {.base.} =
   return data
 
 
-method Insert* (self: InfluxDBClient, database: var string, item: var JsonNode): JsonNode {.base.} =
+method Insert* (self: InfluxDBClient, database: var string, asset: string, item: var JsonNode): JsonNode {.base.} =
   # item = [unix time, value]
   CleanDatabaseName(database)
-  echo database
-  echo $self.CreateDatabase(database)
+  discard self.CreateDatabase(database)
   var timestampStr = $item[0].getFNum
   var timestamp: int64
   if timestampStr.contains("."):
@@ -58,14 +57,17 @@ method Insert* (self: InfluxDBClient, database: var string, item: var JsonNode):
     timestamp = parseBiggestInt(timestampStr & "000000000")
   let proto = LineProtocol(measurement: "price", timestamp: timestamp, fields: @{
     "value": $item[1].getFNum
+  }.toTable, tags: @{
+    "host": "localhost",
+    "instance": asset,
+    "type": asset
   }.toTable)
-  echo $proto
   let (resp, data) = self.cli.write(database, @[proto])
   if $resp != "OK":
     raise newException(IOError, $resp & "; Check if database exists")
   return data
 
 
-method InsertAll* (self: InfluxDBClient, database: var string, items: var JsonNode): void {.base.} =
+method InsertAll* (self: InfluxDBClient, database: var string, asset: string, items: var JsonNode): void {.base.} =
   for item in items.mitems():
-    discard self.Insert(database, item)
+    discard self.Insert(database, asset, item)

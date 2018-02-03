@@ -87,6 +87,18 @@ var getDashConf = function getDashConf () {
     'couchbase'
   ];
 
+  plugins.price = new Plugin();
+  plugins.price.config.multi = true;
+
+  plugins.price.price = {
+    'graph': {
+      'price': {}
+    },
+    'panel': {
+      'title': 'Price for @metric',
+      'groupBy': null
+    }
+  };
 
   // collectd cpu plugin configuration: https://github.com/anryko/cpu-collectd-plugin
   // works also with default cpu collectd plugin configured as below

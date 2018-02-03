@@ -29,3 +29,6 @@ restart:
 
 connect:
 	docker-compose exec bearded-dragon bash
+
+query:
+	curl -sG 'http://localhost:8086/query?pretty=true' --data-urlencode "db=$(db)" --data-urlencode "q=$(q)"
