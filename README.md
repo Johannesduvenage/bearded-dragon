@@ -110,20 +110,6 @@ View your feed here: http://localhost:3000/dashboard/script/dragon.js?metric=pri
 Open the link returned in the browser to find a list of Grafana dashboards displaying
 the price of all the assets you are tracking. These graphs refresh every second (which you can change via the `refresh` query parameter)
 
-run `make`
-  - builds nimlang/nim docker image
-  - run bearded-dragon, influxdb, and grafana containers
-  - compiles bearded-dragon source
-
-## Interactive Prompt
-
-run `make dragon`
-
-This opens an interactive prompt where you can run commands like:
-  - `import gdax from 2018-01-02 to 2018-01-04 every 1h`: import a specified time range of data from a specified service
-  - `listen gdax for usd-btc`: listen to live data from a specified service, product
-  - `show gdax`: show available products for specified service
-  - `tracking`: show which products you're currently tracking
 
 ## Importing
 
@@ -133,12 +119,15 @@ All Influxdb and Grafana data is stored persistently. Run `make clean` to start 
 
 The only thing that's pre-added is the data source in Grafana pointing to an InfluxDB database called `btc_usd`.
 
+
 ## Credentials
+
 
 #### InfluxDB
 
 user: root
 pass: root
+
 
 #### Grafana
 
