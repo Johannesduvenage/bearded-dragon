@@ -1,5 +1,3 @@
-// Getdash application
-
 // getDashApp :: [datasourceObj], confObj -> dashObj
 var getDashApp = function getDashApp (datasourcesAll, getdashConf) {
   'use strict';

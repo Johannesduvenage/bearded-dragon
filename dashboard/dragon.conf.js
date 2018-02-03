@@ -1,5 +1,3 @@
-// Configuration JS file for getdash.app.js
-
 // getDashConf :: -> configurationObj
 var getDashConf = function getDashConf () {
   'use strict';
