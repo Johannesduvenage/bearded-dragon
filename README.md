@@ -26,7 +26,10 @@ for InfluxDB and Grafana. `./dashapp` and `./dashboards` provide dynamic dashboa
 for live streaming data with `dragon listen`. `./influxdb` and `./grafana` are
 created when you run `make up` and mount to `/data` and `/var/lib/grafana` to
 their respective containers. You can grab any of this data and plug it into your
-own service. Check out `docker-compose.yml` for more info.
+own service. The root directory of the project is mounted to `/app` on the
+main bearded-dragon container where most of the commands will be run.
+
+Check out `docker-compose.yml` for more info.
 
 #### Interactive Shell
 
