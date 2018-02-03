@@ -17,7 +17,6 @@ services:
     volumes:
       - ./influxdb:/data
     environment:
-      - PRE_CREATE_DB=btc_usd
       - ADMIN_USER=root
       - INFLUXDB_INIT_PWD=root
     ports:
