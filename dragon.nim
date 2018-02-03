@@ -45,4 +45,4 @@ elif args["show"]:
   echo Products(newGdaxHttpClient()).pretty
 
 elif args["tracking"]:
-  echo Databases(newInfluxDBClient("influxdb", "root", "root")).pretty
+  echo Databases(newInfluxDBClient("influxdb", 8086, "root", "root")).pretty

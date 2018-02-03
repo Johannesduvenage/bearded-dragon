@@ -11,8 +11,8 @@ type
     cli: InfluxDB
 
 
-proc newInfluxDBClient* (host: string, user: string, pass: string): InfluxDBClient =
-  let cli = InfluxDB(protocol: HTTP, host: host, port: 8086, username: user, password: user) # , debugMode: true)
+proc newInfluxDBClient* (host: string, port: int, user: string, pass: string): InfluxDBClient =
+  let cli = InfluxDB(protocol: HTTP, host: host, port: port, username: user, password: user) # , debugMode: true)
   return InfluxDBClient(cli: cli)
 
 

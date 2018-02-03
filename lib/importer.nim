@@ -18,8 +18,8 @@ let time_units = {
 }.newTable
 
 proc Import* (opts: TableRef[string, string]): void =
-  let ic = newInfluxDBClient("influxdb", "root", "root")
-  let gc = newGrafanaClient("grafana", "admin", "admin")
+  let ic = newInfluxDBClient("influxdb", 8086, "root", "root")
+  let gc = newGrafanaClient("grafana", 3000, "admin", "admin")
   opts["granularity"] = time_units[opts["granularity"]]
   var ghc = newGdaxHttpClient()
   var buckets = ghc.ProductCandles(opts)

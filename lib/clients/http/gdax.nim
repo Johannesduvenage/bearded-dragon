@@ -126,9 +126,8 @@ method ListenTicker* (self: GdaxHttpClient, service: string, asset: string): voi
   let ws = waitFor newAsyncWebsocket(url, ctx=newContext(verifyMode=CVerifyNone))
 
   # create db + monit clients
-  # TODO: fix this disgusting host inconsistency
-  let ic = newInfluxDBClient("influxdb", "root", "root")
-  let gc = newGrafanaClient("grafana:3000", "admin", "admin")
+  let ic = newInfluxDBClient("influxdb", 8086, "root", "root")
+  let gc = newGrafanaClient("grafana", 3000, "admin", "admin")
   discard gc.NewInfluxDBDatasource( %* {
     "name": label,
     "database": databaseName,
