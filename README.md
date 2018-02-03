@@ -133,12 +133,14 @@ The only thing that's pre-added is the data source in Grafana pointing to an Inf
 #### InfluxDB
 
 user: root
+
 pass: root
 
 
 #### Grafana
 
 user: admin
+
 pass: admin
 
 
