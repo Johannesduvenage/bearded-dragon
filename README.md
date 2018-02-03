@@ -3,6 +3,7 @@ bearded-dragon
 
 Like Gekko, but faster and better
 
+![](https://img.etsystatic.com/il/0a5bbf/640243540/il_fullxfull.640243540_37dt.jpg)
 
 ## Getting Started
 
