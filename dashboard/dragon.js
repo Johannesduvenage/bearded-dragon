@@ -29,8 +29,8 @@ return function scriptedDashboard (callback) {
   'use strict';
 
   loadScripts([
-      'public/app/dashapp/dragon.app.js',
-      'public/app/dashapp/dragon.conf.js'
+      'public/app/dragon/dragon.app.js',
+      'public/app/dragon/dragon.conf.js'
     ]).then(function () {
 
     // sanitize :: Str -> new Str

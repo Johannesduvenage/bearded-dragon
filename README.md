@@ -25,10 +25,10 @@ via the Makefile. The following targets are available:
 
 
 To keep data persistent, we mount certain directories that will maintain state
-for InfluxDB and Grafana. `./dashapp` and `./dashboards` provide dynamic dashboards
+for InfluxDB and Grafana. `./dashboard` provides a dynamic dashboard
 for live streaming data with `dragon listen`. `./influxdb` and `./grafana` are
 created when you run `make up` and mount to `/data` and `/var/lib/grafana` to
-their respective containers. You can grab any of this data and plug it into your
+their respective containers. You can grab all of this data and plug it into your
 own service. The root directory of the project is mounted to `/app` on the
 main bearded-dragon container where most of the commands will be run.
 

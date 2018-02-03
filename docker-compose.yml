@@ -27,8 +27,9 @@ services:
     image: grafana/grafana
     volumes:
       - ./grafana:/var/lib/grafana
-      - ./dashboards:/usr/share/grafana/public/dashboards
-      - ./dashapp:/usr/share/grafana/public/app/dashapp
+      - ./dashboard/dragon.js:/usr/share/grafana/public/dashboards/dragon.js
+      - ./dashboard/dragon.app.js:/usr/share/grafana/public/app/dragon/dragon.app.js
+      - ./dashboard/dragon.conf.js:/usr/share/grafana/public/app/dragon/dragon.conf.js
     links:
       - influxdb
     ports:
