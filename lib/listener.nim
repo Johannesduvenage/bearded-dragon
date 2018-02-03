@@ -1,8 +1,3 @@
-# {.compile: "c/listener.c".}
-
-
-# proc Listen* (): cint {.importc.}
-
 import clients/http/gdax.nim
 
 
