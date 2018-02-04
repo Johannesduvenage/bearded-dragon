@@ -99,7 +99,7 @@ Realtime Methods
 """
 
 
-method ListenTicker* (self: GdaxHttpClient, service: string, asset: string): void {.base.} =
+method ListenTicker* (self: GdaxHttpClient, service, asset: string) {.base thread.} =
 
   # websocket payload
   var j = %* {
@@ -139,7 +139,7 @@ method ListenTicker* (self: GdaxHttpClient, service: string, asset: string): voi
     "title": label
   })
 
-  proc reader() {.async.} =
+  proc reader() {.async, gcsafe.} =
     while true:
       let read = await ws.sock.readData(true)
       let resp = parseJson($read.data)
@@ -151,13 +151,12 @@ method ListenTicker* (self: GdaxHttpClient, service: string, asset: string): voi
       if resp.hasKey("time") == false:
         resp["time"] = epochTime().newJFloat
       var args = newJArray()
-      echo $resp
       args.elems = @[ resp["time"], resp["price"].getStr.parseFloat.newJFloat ]
       discard ic.Insert(databaseName, asset, args)
 
   proc writer() {.async.} =
     while true:
-      await sleepAsync(5000)
+      await sleepAsync(3000)
       await ws.sock.sendText($j, true)
 
   asyncCheck reader()

@@ -6,11 +6,23 @@ build:
 up:
 	docker-compose up -d
 
-compile:
-	docker-compose exec bearded-dragon nim c -d:ssl -o:bin/dragon dragon.nim
+exec:
+	docker-compose exec bearded-dragon $(cmd)
+
+decache:
+	-find . -name nimcache | xargs rm -rf
+
+compile: decache
+	make exec cmd="nim c -d:ssl --threads:on -o:bin/dragon dragon"
+
+test: decache
+	make exec cmd="nim c -r -d:ssl --threads:on -o:bin/dragon_test tests/dragon_test"
 
 dragon:
-	docker-compose exec bearded-dragon ./bin/promptify ./bin/dragon
+	make exec cmd="./bin/dragon shell"
+
+connect:
+	make exec cmd="bash"
 
 kill:
 	docker-compose kill
@@ -18,11 +30,14 @@ kill:
 restart:
 	docker-compose restart
 
-connect:
-	docker-compose exec bearded-dragon bash
-
 query:
 	curl -sG 'http://localhost:8086/query?pretty=true' --data-urlencode "db=$(db)" --data-urlencode "q=$(q)"
+
+db:
+	make query q="show databases"
+
+series:
+	make query db=$(db) q="show series"
 
 clean: kill
 	-rm -rf nimcache

@@ -12,5 +12,17 @@ pipeline {
       }
     }
 
+    stage("start") {
+      steps {
+        sh "make up"
+      }
+    }
+
+    stage("compile") {
+      steps {
+        sh "make compile"
+      }
+    }
+
   }
 }

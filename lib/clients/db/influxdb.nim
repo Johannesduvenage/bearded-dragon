@@ -16,7 +16,7 @@ proc newInfluxDBClient* (host: string, port: int, user: string, pass: string): I
   return InfluxDBClient(cli: cli)
 
 
-method CreateDatabase* (self: InfluxDBClient, database: string): JsonNode {.base.} =
+method CreateDatabase* (self: InfluxDBClient, database: string): JsonNode {.base, gcsafe.} =
   # CleanDatabaseName(database)
   try:
     let (resp, data) = self.cli.query("", "CREATE DATABASE " & database, HttpPost)
@@ -44,7 +44,7 @@ method SelectAll* (self: InfluxDBClient, database: string): JsonNode {.base.} =
   return data
 
 
-method Insert* (self: InfluxDBClient, database: var string, asset: string, item: var JsonNode): JsonNode {.base.} =
+method Insert* (self: InfluxDBClient, database: var string, asset: string, item: var JsonNode): JsonNode {.base, gcsafe.} =
   # item = [unix time, value]
   CleanDatabaseName(database)
   discard self.CreateDatabase(database)
